@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: eureka-server
+  profiles:
+    active: dev
+
+server:
+  port: 20000
+
+eureka:
+  # 注册中心不用注册自己
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  # 注定中心主机名称
+  instance:
+    hostname: localhost
