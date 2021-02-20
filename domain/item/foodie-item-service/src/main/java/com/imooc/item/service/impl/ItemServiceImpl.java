@@ -12,8 +12,6 @@ import com.imooc.item.pojo.vo.ShopcartVO;
 import com.imooc.item.service.ItemService;
 import com.imooc.pojo.PagedGridResult;
 import com.imooc.utils.DesensitizationUtil;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+
+//import org.redisson.api.RLock;
+//import org.redisson.api.RedissonClient;
 
 // @RestController相当于@Service + @ResponseBody
 @RestController
@@ -43,8 +43,10 @@ public class ItemServiceImpl implements ItemService {
     private ItemsCommentsMapper itemsCommentsMapper;
     @Autowired
     private ItemsMapperCustom itemsMapperCustom;
-    @Autowired
-    private RedissonClient redissonClient;
+
+    // TODO redis分布式锁最后再整合
+//    @Autowired
+//    private RedissonClient redissonClient;
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
@@ -223,9 +225,10 @@ public class ItemServiceImpl implements ItemService {
 
         // lockUtil.unLock(); -- 解锁
 
+        // TODO redis分布式锁最后再整合
         // 使用Redisson分布式锁把数据库压力前移到应用层
-        RLock lock = redissonClient.getLock("item_lock" + ":" + specId);
-        lock.lock(30, TimeUnit.SECONDS);
+//        RLock lock = redissonClient.getLock("item_lock" + ":" + specId);
+//        lock.lock(30, TimeUnit.SECONDS);
         try {
             logger.info("获得了锁!");
             int result = itemsMapperCustom.decreaseItemSpecStock(specId, buyCounts);
@@ -234,7 +237,7 @@ public class ItemServiceImpl implements ItemService {
                 throw new RuntimeException("订单创建失败，原因：库存不足!");
             }
         }finally {
-            lock.unlock();
+//            lock.unlock();
             logger.info("释放了锁!");
         }
     }
