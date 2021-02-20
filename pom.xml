@@ -15,6 +15,7 @@
         <module>common/foodie-cloud-web-components</module>
         <module>domain/item/foodie-item-pojo</module>
         <module>domain/item/foodie-item-mapper</module>
+        <module>domain/item/foodie-item-api</module>
     </modules>
 
     <dependencyManagement>
