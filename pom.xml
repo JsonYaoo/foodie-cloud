@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>common/foodie-cloud-common</module>
+        <module>common/foodie-cloud-shared-pojo</module>
     </modules>
 
     <dependencyManagement>
