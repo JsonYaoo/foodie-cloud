@@ -12,6 +12,7 @@
         <module>common/foodie-cloud-common</module>
         <module>common/foodie-cloud-shared-pojo</module>
         <module>platform/registry-center</module>
+        <module>common/foodie-cloud-web-components</module>
     </modules>
 
     <dependencyManagement>
