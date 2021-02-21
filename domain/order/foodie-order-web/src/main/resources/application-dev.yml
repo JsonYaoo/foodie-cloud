@@ -1,0 +1,37 @@
+server:
+  port: 10003
+
+spring:
+  datasource:
+    # 集群时一定要写内网IP
+#    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+#    password: root
+
+    # 单机版MyCat
+#    url: jdbc:mysql://192.168.1.141:8066/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+#    password: 123456
+
+    # 拆分数据源到独立database instance，或者独立schema
+    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    password: root
+  redis:
+    # Redis单机单实例
+    database: 0
+    host: 192.168.1.142
+    port: 6379
+    password: root
+    # Redis哨兵模式
+#    database: 1
+#    password: root
+#    sentinel:
+#      master: imooc-master
+#      nodes: 192.168.1.112:26379,192.168.1.115:26379,192.168.1.116:26379
+    # Redis集群模式
+#    password: root
+#    cluster:
+#      nodes: 192.168.1.114:6379,192.168.1.117:6379,192.168.1.118:6379,192.168.1.124:6379,192.168.1.127:6379,192.168.1.128:6379
+
+mybatis:
+  # 生产不需要打印SQL日志
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl    # SQL日志打印

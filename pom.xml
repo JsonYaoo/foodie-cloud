@@ -27,6 +27,7 @@
         <module>domain/order/foodie-order-mapper</module>
         <module>domain/order/foodie-order-api</module>
         <module>domain/order/foodie-order-service</module>
+        <module>domain/order/foodie-order-web</module>
     </modules>
 
     <dependencyManagement>
