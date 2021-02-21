@@ -20,6 +20,7 @@
         <module>domain/item/foodie-item-web</module>
         <module>domain/user/foodie-user-pojo</module>
         <module>domain/user/foodie-user-mapper</module>
+        <module>domain/user/foodie-user-api</module>
     </modules>
 
     <dependencyManagement>
