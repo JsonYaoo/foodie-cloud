@@ -32,27 +32,10 @@ public class BaseController {
                                                             File.separator + "faces";
 //    public static final String IMAGE_USER_FACE_LOCATION = "/workspaces/images/foodie/faces";
 
-    // FIXME 订单域服务未抽取
-//    @Autowired
-//    public MyOrdersService myOrdersService;
-
     // FIXME Redis未引用
 //    @Autowired
 //    private RedisOperator redisOperator;
 
-    // FIXME 订单域服务未抽取
-//    /**
-//     * 用于验证用户和订单是否有关联关系，避免非法用户调用
-//     * @return
-//     */
-//    public IMOOCJSONResult checkUserOrder(String userId, String orderId) {
-//        Orders order = myOrdersService.queryMyOrder(userId, orderId);
-//        if (order == null) {
-//            return IMOOCJSONResult.errorMsg("订单不存在！");
-//        }
-//        return IMOOCJSONResult.ok(order);
-//    }
-//
     // FIXME 用户域服务未抽取
 //    // 改用UsersVO => 忽略隐私信息, 生成用户token, 存入redis会话
 //    public UsersVO conventUsersVO(Users userResult) {
