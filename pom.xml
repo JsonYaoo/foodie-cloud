@@ -28,6 +28,7 @@
         <module>domain/order/foodie-order-api</module>
         <module>domain/order/foodie-order-service</module>
         <module>domain/order/foodie-order-web</module>
+        <module>domain/cart/foodie-cart-api</module>
     </modules>
 
     <dependencyManagement>
