@@ -1,0 +1,8 @@
+server:
+  port: 11002
+
+spring:
+  datasource:
+    # 集群时一定要写内网IP
+    url: jdbc:mysql://192.168.1.113:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    password: root

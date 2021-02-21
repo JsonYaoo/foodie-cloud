@@ -22,6 +22,7 @@
         <module>domain/user/foodie-user-mapper</module>
         <module>domain/user/foodie-user-api</module>
         <module>domain/user/foodie-user-service</module>
+        <module>domain/user/foodie-user-web</module>
     </modules>
 
     <dependencyManagement>
