@@ -1,6 +1,9 @@
 package com.imooc.config;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,11 +22,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:/workspaces/images/");  // 映射本地静态资源 -> 相当于用域名替换调这些路径, 就是写死, 因为要存到数据库中的, 哪个环境都一样
     }
 
-    // FIXME SpringAutoConfigure依赖未引用
-//    @Bean
-//    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-//        return builder.build();
-//    }
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
 
     // FIXME 自定义Token拦截器未配置
 //    @Bean
