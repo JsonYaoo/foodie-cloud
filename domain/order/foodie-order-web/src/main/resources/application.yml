@@ -75,3 +75,39 @@ pagehelper:
   helperDialect: mysql
   # 是否支持分页参数传递
   supportMethodsArguments: true
+
+############################################################
+#
+# 设置Ribbon、Feign、Hystrix的超时/重试策略:
+# 1) 局部指定微服务配置的优先级比全局配置的高, 优先级高的策略会覆盖优先级低的策略
+# 2) Feign优先级比Ribbon的高, 优先级高的策略会覆盖优先级低的策略
+# 3) 但Feign、Ribbon优先级与Hystrix不会进行覆盖, 而是共同作用
+#
+############################################################
+# 优先级1: Ribbon全局配置
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 1000
+
+# 优先级2: Ribbon指定微服务的局部配置
+foodie-user-service:
+  ribbon:
+    ConnectTimeout: 1000
+    ReadTimeout: 2000
+    OkToRetryOnAllOperations: true
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 2
+    # 服务请求的最大超时时间: (1000 + 2000) * (1 + 2) * (1 + 2) = 27000ms = 27s
+
+# Feign超时判定, 优先级比Ribbon的高
+feign:
+  client:
+    config:
+      # 优先级3: Feign全局配置
+      default:
+        connectTimeout: 1000
+        readTimeout: 3000
+      # 优先级4: Feign指定微服务的局部配置
+      foodie-user-service:
+        connectTimeout: 1000
+        readTimeout: 4000
