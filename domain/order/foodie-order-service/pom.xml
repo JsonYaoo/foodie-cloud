@@ -40,11 +40,5 @@
             <artifactId>foodie-item-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- TODO 学到Feign章节(接口间的服务调用)以后, 就可以把它删掉 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
     </dependencies>
 </project>

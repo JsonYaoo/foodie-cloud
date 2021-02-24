@@ -13,7 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan(basePackages = "com.imooc.user.mapper")
 @ComponentScan(basePackages = {"com.imooc", "org.n3r.idworker"})
 @EnableDiscoveryClient
-// TODO 添加Feign注解
+// 没有Feign接口调用, 不需要开启@EnableFeignClients
 public class UserApplication {
 
     public static void main(String[] args) {

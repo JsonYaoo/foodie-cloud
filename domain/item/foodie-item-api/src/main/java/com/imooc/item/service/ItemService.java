@@ -7,6 +7,7 @@ import com.imooc.item.pojo.ItemsSpec;
 import com.imooc.item.pojo.vo.CommentLevelCountsVO;
 import com.imooc.item.pojo.vo.ShopcartVO;
 import com.imooc.pojo.PagedGridResult;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+// 服务提供者与服务消费者公用一个接口, 服务消费者调用时, feign接口会动态代理生成代理对象, 发起调用时自动请求foodie-item-service服务
+@FeignClient("foodie-item-service")
 // 注解会继承到实现类
 @RequestMapping("item-api")
 public interface ItemService {

@@ -17,6 +17,9 @@ server:
 spring:
   application:
     name: foodie-cart-service
+  # 允许Feign接口代理对象重载: 当Bean对象名字一样的时候, 允许覆盖注册
+  main:
+    allow-bean-definition-overriding: true
   profiles:
     # 除了配置文件, 还可以通过profiles指定配置文件实现
     active: dev

@@ -2,6 +2,7 @@ package com.imooc.order.controller.center;
 
 import com.imooc.controller.BaseController;
 import com.imooc.enums.YesOrNo;
+import com.imooc.item.service.ItemCommentsService;
 import com.imooc.order.pojo.OrderItems;
 import com.imooc.order.pojo.Orders;
 import com.imooc.order.pojo.bo.center.OrderItemsCommentBO;
@@ -14,11 +15,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -33,12 +31,8 @@ public class MyCommentsController extends BaseController {
     @Autowired
     private MyOrdersService myOrdersService;
 
-    // TODO 学到Feign章节(接口间的服务调用)以后, 可以改用接口间的服务调用
     @Autowired
-    private LoadBalancerClient loadBalancerClient;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private ItemCommentsService itemCommentsService;
 
     @ApiOperation(value = "查询订单列表", notes = "查询订单列表", httpMethod = "POST")
     @PostMapping("/pending")
@@ -110,11 +104,7 @@ public class MyCommentsController extends BaseController {
             pageSize = COMMON_PAGE_SIZE;
         }
 
-        // TODO 临时解决方案, 使用远程方法调用: 通过服务名和LoadBalancerClient发现服务ip和端口, 学习feign后需要更改
-//        PagedGridResult grid = myCommentsService.queryMyComments(userId, page, pageSize);
-        ServiceInstance userInstance = loadBalancerClient.choose("foodie-item-service");
-        PagedGridResult grid = restTemplate.getForObject(String.format("http://%s:%s/item-comments-api/myComments?userId=%s&page=%s&pageSize=%s",
-                userInstance.getHost(), userInstance.getPort(), userId, page, pageSize), PagedGridResult.class);
+        PagedGridResult grid = itemCommentsService.queryMyComments(userId, page, pageSize);
 
         return IMOOCJSONResult.ok(grid);
     }
