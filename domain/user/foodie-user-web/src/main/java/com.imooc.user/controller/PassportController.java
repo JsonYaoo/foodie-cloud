@@ -10,6 +10,8 @@ import com.imooc.utils.CookieUtils;
 import com.imooc.utils.JsonUtils;
 import com.imooc.utils.MD5Utils;
 import com.imooc.utils.RedisOperator;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -180,9 +182,38 @@ public class PassportController extends BaseController {
 
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
     @PostMapping("/login")
+    @HystrixCommand(
+            // 全局唯一的标识符号, 默认为函数名称
+            commandKey = "loginFail",
+            // 全局服务分组标识符, 用于组织Dashboard仪表盘统计信息, 默认为类名
+            groupKey = "password",
+            // 降级方法名(同一个类中, public | private)
+            fallbackMethod = "loginFail",
+            // 线程池/线程组名称, 多个服务可以共用一个线程池/线程组
+            threadPoolKey = "threadPoolA",
+            threadPoolProperties = {
+                    // 线程池核心线程数
+                    @HystrixProperty(name = "coreSize", value = "10"),
+                    // 线程池阻塞等待队列长度
+                    @HystrixProperty(name = "maxQueueSize", value = "40"),
+                    // 线程池阻塞等待队列拒绝策略(队列长度=-1时不生效)
+                    @HystrixProperty(name = "queueSizeRejectionThreshold", value = "15"),
+                    // 线程池统计窗口持续时间
+                    @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "2024"),
+                    // 线程池统计窗口内的桶子数量
+                    @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "18")
+            }
+//            ,
+//            commandProperties = {
+//                    // 还可以在这里配置@HystrixCommand熔断降级相关的属性, 但这里的这些属性配置在了配置文件中
+//            }
+    )
     public IMOOCJSONResult login(@RequestBody UserBO userBO,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
+
+        // 测试Hystrix超时降级
+        Thread.sleep(40000);
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();
@@ -212,6 +243,22 @@ public class PassportController extends BaseController {
         synchShopcartData(userResult.getId(), request, response);
 
         return IMOOCJSONResult.ok(userResult);
+    }
+
+    /**
+     * Hystrix降级方法
+     * @param userBO
+     * @param request
+     * @param response
+     * @param throwable
+     * @return
+     * @throws Exception
+     */
+    public IMOOCJSONResult loginFail(UserBO userBO,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     Throwable throwable) throws Exception {
+        return IMOOCJSONResult.errorMap("验证码输错了(模仿12306)" + throwable.getLocalizedMessage());
     }
 
     @ApiOperation(value = "用户退出登录", notes = "用户退出登录", httpMethod = "POST")

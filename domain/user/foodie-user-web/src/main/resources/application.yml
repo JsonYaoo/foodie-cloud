@@ -88,3 +88,60 @@ management:
   endpoint:
     health:
       show-details: always
+
+# 配置HystrixCommand属性
+hystrix:
+  command:
+    # HystrixCommand全局属性配置
+    default:
+      # 打开降级功能
+      fallback:
+        enabled: true
+      # 打开断路器功能
+      circuitBreaker:
+        enabled: true
+        # 5个request之后才进行统计
+        requestVolumeThreshold: 5
+        # 超过50%错误，那么开启熔断
+        errorThresholdPercentage: 50
+        # 10秒之后进入半开状态
+        sleepWindowInMilliseconds: 10000
+        # forceClosed, forceOpen 强制关闭/开启熔断开关(慎用)
+      # 打开超时判断功能
+      execution:
+        timeout:
+          enabled: true
+        # 指定线程池隔离方式, 还可以设置为信号量方式
+        isolation:
+          thread:
+            # 指定线程超时时间为10s
+            timeoutInMilliseconds: 10000
+            # 自定线程超时时打断该线程(同JVM时)
+            interruptOnTimeout: true
+            # 自定线程取消时打断该线程(同JVM时)
+            interruptOnFutureCancel: true
+      # 配置统计属性
+      metrics:
+        # 统计数量
+        rollingStats:
+          # 时间窗口设置
+          timeInMilliseconds: 20000
+          # 设置时间窗口内桶的数量(一般最好被时间整除)
+          # numBuckets: 10
+          # 设置每个桶的大小(容纳请求的数量)
+          # bucketSize: 300
+        # 统计百分比
+#        rollingPercentile:
+          # 时间窗口设置
+#          timeInMilliseconds: 20000
+          # 设置时间窗口内桶的数量(一般最好被时间整除)
+          # numBuckets: 10
+          # 设置每个桶的大小(容纳请求的数量)
+          # bucketSize: 300
+    # HystrixCommand 指定服务属性配置
+    loginFail:
+      execution:
+        isolation:
+          thread:
+            # 指定线程超时时间为3s
+            timeoutInMilliseconds: 3000
