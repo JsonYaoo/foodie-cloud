@@ -1,0 +1,24 @@
+server:
+  port: 20001
+management:
+  server:
+    port: 52001
+
+spring:
+  application:
+    name: hystrix-turbine
+
+turbine:
+  # Turbine配置: 指定当前Turbine集群名称表达式, 这里是单机使用默认名称
+  # eg => eureka: instance: metadata-map: abcd-> imooc是配置为: metadata['abcd']
+  cluster-name-expression: '"default"'
+  # Turbine配置: 指定要监控的集群 eg => cluster1,cluster2
+  aggregator:
+    cluster-config: default
+  # Turbine配置: 将端口和主机名作为区分不同服务的条件(默认只使用Host), 这里主要为了避免单机测试时主机名相同的情况
+  combine-host-port: true
+  # Turbine配置: 指定所需要监控的服务名
+  app-config: foodie-order-service,foodie-user-service,foodie-item-service,foodie-cart-service
+  # Turbine配置: 指定哪个Actuator的端点拉取方法调用信息
+  instanceUrlSuffix:
+    default: actuator/hystrix.stream
