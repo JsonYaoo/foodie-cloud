@@ -116,9 +116,9 @@ hystrix:
           thread:
             # 指定线程超时时间为10s
             timeoutInMilliseconds: 10000
-            # 自定线程超时时打断该线程(同JVM时)
+            # 自定线程超时时打断该线程
             interruptOnTimeout: true
-            # 自定线程取消时打断该线程(同JVM时)
+            # 自定线程取消时打断该线程
             interruptOnFutureCancel: true
       # 配置统计属性
       metrics:

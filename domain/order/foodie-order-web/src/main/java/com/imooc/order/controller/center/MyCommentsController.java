@@ -2,7 +2,7 @@ package com.imooc.order.controller.center;
 
 import com.imooc.controller.BaseController;
 import com.imooc.enums.YesOrNo;
-import com.imooc.item.service.ItemCommentsService;
+import com.imooc.order.fallback.itemservice.ItemCommentsFeignClient;
 import com.imooc.order.pojo.OrderItems;
 import com.imooc.order.pojo.Orders;
 import com.imooc.order.pojo.bo.center.OrderItemsCommentBO;
@@ -32,7 +32,7 @@ public class MyCommentsController extends BaseController {
     private MyOrdersService myOrdersService;
 
     @Autowired
-    private ItemCommentsService itemCommentsService;
+    private ItemCommentsFeignClient itemCommentsService;
 
     @ApiOperation(value = "查询订单列表", notes = "查询订单列表", httpMethod = "POST")
     @PostMapping("/pending")

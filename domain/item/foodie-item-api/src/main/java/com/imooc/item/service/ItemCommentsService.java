@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * ItemCommentsService的Hystrix降级:
+ * 1. 内部的降级(商品中心): 放到foodie-item-service自己的服务里面来实现, 不用暴露给调用方, 只要降级后把结果返回就好
+ * 2. 调用方降级(订单中心, 即商品中心服务的调用方): 交由订单中心来定义降级逻辑, 是订单中心自己的降级逻辑, 与商品中心无关
+ */
 @FeignClient("foodie-item-service")
 @RequestMapping("item-comments-api")
 public interface ItemCommentsService {

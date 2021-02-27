@@ -1,7 +1,7 @@
 package com.imooc.order.service.impl.center;
 
 import com.imooc.enums.YesOrNo;
-import com.imooc.item.service.ItemCommentsService;
+import com.imooc.order.fallback.itemservice.ItemCommentsFeignClient;
 import com.imooc.order.mapper.OrderItemsMapper;
 import com.imooc.order.mapper.OrderStatusMapper;
 import com.imooc.order.mapper.OrdersMapper;
@@ -35,7 +35,7 @@ public class MyCommentsServiceImpl extends BaseService implements MyCommentsServ
     public OrderStatusMapper orderStatusMapper;
 
     @Autowired
-    public ItemCommentsService itemCommentsService;
+    public ItemCommentsFeignClient itemCommentsService;
 
     @Autowired
     private Sid sid;

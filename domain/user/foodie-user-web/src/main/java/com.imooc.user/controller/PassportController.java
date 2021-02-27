@@ -189,6 +189,8 @@ public class PassportController extends BaseController {
             groupKey = "password",
             // 降级方法名(同一个类中, public | private)
             fallbackMethod = "loginFail",
+            // 配置忽略抛出的异常: 当抛出列表中的异常, 不会触发降级
+            ignoreExceptions = {IllegalArgumentException.class},
             // 线程池/线程组名称, 多个服务可以共用一个线程池/线程组
             threadPoolKey = "threadPoolA",
             threadPoolProperties = {
