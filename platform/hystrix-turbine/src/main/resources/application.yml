@@ -8,6 +8,16 @@ spring:
   application:
     name: hystrix-turbine
 
+############################################################
+#
+# Eureka注册中心
+#
+############################################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20000/eureka/
+
 turbine:
   # Turbine配置: 指定当前Turbine集群名称表达式, 这里是单机使用默认名称
   # eg => eureka: instance: metadata-map: abcd-> imooc是配置为: metadata['abcd']

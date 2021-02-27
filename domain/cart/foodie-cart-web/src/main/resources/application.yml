@@ -75,3 +75,16 @@ pagehelper:
   helperDialect: mysql
   # 是否支持分页参数传递
   supportMethodsArguments: true
+
+# 开启所有Actuator的Endpoints
+management:
+  # 已禁用, 可不配
+#  security:
+#    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

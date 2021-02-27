@@ -31,5 +31,11 @@
             <artifactId>foodie-cloud-web-components</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Service和Web都可以使用Hystrix -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
     </dependencies>
 </project>

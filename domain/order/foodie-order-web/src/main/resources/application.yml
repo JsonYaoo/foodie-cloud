@@ -111,3 +111,16 @@ feign:
       foodie-user-service:
         connectTimeout: 1000
         readTimeout: 4000
+
+# 开启所有Actuator的Endpoints
+management:
+  # 已禁用, 可不配
+#  security:
+#    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
