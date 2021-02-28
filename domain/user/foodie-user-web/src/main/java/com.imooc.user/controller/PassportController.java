@@ -3,6 +3,7 @@ package com.imooc.user.controller;
 import com.imooc.bo.ShopcartBO;
 import com.imooc.controller.BaseController;
 import com.imooc.pojo.IMOOCJSONResult;
+import com.imooc.user.config.UserApplicationProperties;
 import com.imooc.user.pojo.Users;
 import com.imooc.user.pojo.bo.UserBO;
 import com.imooc.user.service.UserService;
@@ -14,6 +15,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ import java.util.List;
 
 @Api(value = "注册登录", tags = {"用于注册登录的相关接口"})
 @RestController
+@Slf4j
 @RequestMapping("passport")
 public class PassportController extends BaseController {
 
@@ -33,6 +36,9 @@ public class PassportController extends BaseController {
 
     @Autowired
     private RedisOperator redisOperator;
+
+    @Autowired
+    private UserApplicationProperties userApplicationProperties;
 
     @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在", httpMethod = "GET")
     @GetMapping("/usernameIsExist")
@@ -58,6 +64,12 @@ public class PassportController extends BaseController {
     public IMOOCJSONResult regist(@RequestBody UserBO userBO,// Json对象用@RequestBody
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
+
+        // 测试集成配置中心: 实现动态拉取业务开关控制配置
+        if(userApplicationProperties.isDisabledRegistration()){
+            log.info("user registration request is blocked - {}", userBO.getUsername());
+            return IMOOCJSONResult.errorMsg("当前注册用户过多，请稍后再试");
+        }
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();

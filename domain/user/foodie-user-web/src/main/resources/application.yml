@@ -76,18 +76,19 @@ pagehelper:
   # 是否支持分页参数传递
   supportMethodsArguments: true
 
+# 集成配置中心: 拉取配置中心中的User服务配置
 # 开启所有Actuator的Endpoints
-management:
-  # 已禁用, 可不配
-#  security:
-#    enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
+#management:
+#  # 已禁用, 可不配
+##  security:
+##    enabled: true
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: always
 
 # 配置HystrixCommand属性
 hystrix:
