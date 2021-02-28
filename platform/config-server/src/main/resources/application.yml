@@ -1,0 +1,42 @@
+server:
+  port: 20003
+
+spring:
+  application:
+    name: config-server
+  # 配置配置中心
+  cloud:
+    config:
+      server:
+        # 指定允许覆盖的属性
+        overrides:
+          test: mytest
+        git:
+          # 配置GitHub上配置文件的地址
+          uri: https://github.com/JsonYaoo/foodie-cloud-config.git
+          # 允许强制拉取(非workspaceClean时)
+          force-pull: true
+          # 根据服务名划分配置文件所在的文件夹
+          search-paths: '{application}'
+          # public项目不需要账户和密码即可拉取
+#          username:
+#          password:
+
+# 注册中心注册从Git拉取到的配置文件属性, 实现配置中心的高可用
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20000/eureka/
+
+# 开启所有Actuator的Endpoints
+management:
+  # 已禁用, 可不配
+#  security:
+#    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
