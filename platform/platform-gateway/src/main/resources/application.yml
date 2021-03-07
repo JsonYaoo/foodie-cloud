@@ -15,6 +15,28 @@ spring:
     password: root
   cloud:
     gateway:
+      globalcors:
+        # 配置跨域支持
+        cors-configurations:
+          '[/**]':
+            # 允许返回的资源可以共享给请求来源
+            allowed-origins:
+            - "http://localhost:8080"
+            - "http://shop.z.mukewang.com:8080"
+            - "http://center.z.mukewang.com:8080"
+            - "http://shop.z.mukewang.com"
+            - "http://center.z.mukewang.com"
+            - "*"
+            # 允许请求带上认证信息, 比如cookie、authorization
+            allow-credentials: true
+            # 允许接收请求所有的Header
+            allowed-headers: "*"
+            # 允许接收所有请求的方法
+            allowed-methods: "*"
+            # 允许响应时带上所有Header
+            expose-headers: "*"
+            # 表示浏览器跨域预检指令Options可以在浏览器缓存多长时间, 秒为单位
+            max-age: 600
       discovery:
         locator:
           # 生产上需要关闭自动配置节点路由规则
