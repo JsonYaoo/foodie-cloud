@@ -1,0 +1,35 @@
+# 本次服务网关不集成配置中心
+server:
+  port: 20004
+
+spring:
+  application:
+    name: platform-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          # 生产上需要关闭自动配置节点路由规则
+          enabled: false
+          lower-case-service-id: true
+      # 这里在Java配置类里配置路由规则
+      # routes:
+
+# Eureka注册中心地址
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20000/eureka/
+
+# 开启所有Actuator的Endpoints
+management:
+  # 已禁用, 可不配
+#  security:
+#    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
