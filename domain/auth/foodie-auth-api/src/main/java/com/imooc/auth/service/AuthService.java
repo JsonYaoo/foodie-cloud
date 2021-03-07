@@ -13,15 +13,19 @@ import org.springframework.web.bind.annotation.*;
 public interface AuthService {
 
     @PostMapping("token")
+    @ResponseBody
     public AuthResponse tokenize(@RequestParam("userId") String userId);
 
     @PostMapping("verify")
+    @ResponseBody
     public AuthResponse verify(@RequestBody Account account);
 
     @PostMapping("refresh")
+    @ResponseBody
     public AuthResponse refresh(@RequestParam("refresh") String refresh);
 
     @DeleteMapping("delete")
+    @ResponseBody
     public AuthResponse delete(@RequestBody Account account);
 
 }

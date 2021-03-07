@@ -1,5 +1,9 @@
 package com.imooc.user.controller;
 
+import com.imooc.auth.pojo.Account;
+import com.imooc.auth.pojo.AuthCode;
+import com.imooc.auth.pojo.AuthResponse;
+import com.imooc.auth.service.AuthService;
 import com.imooc.bo.ShopcartBO;
 import com.imooc.controller.BaseController;
 import com.imooc.pojo.IMOOCJSONResult;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Api(value = "注册登录", tags = {"用于注册登录的相关接口"})
@@ -31,14 +36,33 @@ import java.util.List;
 @RequestMapping("passport")
 public class PassportController extends BaseController {
 
+    /**
+     * UserId Header
+     */
+    private static final String UID_HEADER = "imooc-user-id";
+
+    /**
+     * Authorization Header
+     */
+    private static final String AUTH_HEADER = "Authorization";
+
+    /**
+     * RefreshToken Header
+     */
+    private static final String REFRESH_TOKEN_HEADER = "refresh-token";
+
+    @Autowired
+    private AuthService authService;
+
     @Autowired
     private UserService userService;
 
     @Autowired
     private RedisOperator redisOperator;
 
-    @Autowired
-    private UserApplicationProperties userApplicationProperties;
+    // 由于Git仓库拉取老是超时, 所以就注释了
+//    @Autowired
+//    private UserApplicationProperties userApplicationProperties;
 
     @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在", httpMethod = "GET")
     @GetMapping("/usernameIsExist")
@@ -65,11 +89,12 @@ public class PassportController extends BaseController {
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
 
+        // 由于Git仓库拉取老是超时, 所以就注释了
         // 测试集成配置中心: 实现动态拉取业务开关控制配置
-        if(userApplicationProperties.isDisabledRegistration()){
-            log.info("user registration request is blocked - {}", userBO.getUsername());
-            return IMOOCJSONResult.errorMsg("当前注册用户过多，请稍后再试");
-        }
+//        if(userApplicationProperties.isDisabledRegistration()){
+//            log.info("user registration request is blocked - {}", userBO.getUsername());
+//            return IMOOCJSONResult.errorMsg("当前注册用户过多，请稍后再试");
+//        }
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();
@@ -101,6 +126,16 @@ public class PassportController extends BaseController {
         // 4. 实现注册
         Users userResult = userService.createUser(userBO);
 
+        // 这里做测试故意注释掉
+//        // 登录成功后, 需要为网关鉴权生成Token: Passport接口统统不用经过网关鉴权Filter
+//        AuthResponse authResponse = authService.tokenize(userResult.getId());
+//        if (!AuthCode.SUCCESS.getCode().equals(authResponse.getCode())) {
+//            log.error("Token error - uid={}", userResult.getId());
+//            return IMOOCJSONResult.errorMsg("Token error");
+//        }
+//        // 添加Token信息到Token中
+//        addAuth2Header(response, authResponse.getAccount());
+
         // TODO 拆分完微服务再打开
         // 改用UsersVO => 忽略隐私信息, 生成用户token, 存入redis会话
 //        UsersVO usersVO = conventUsersVO(userResult);
@@ -112,6 +147,24 @@ public class PassportController extends BaseController {
         synchShopcartData(userResult.getId(), request, response);
 
         return IMOOCJSONResult.ok();
+    }
+
+    /**
+     * 添加Token信息到Token中
+     *
+     * @param response
+     * @param account
+     */
+    private void addAuth2Header(HttpServletResponse response, Account account) {
+        // 需要修改前端js代码, 在前端页面里拿到Authorization, refresh-token和imooc-user-id, 前端每次请求服务，都把这几个参数带上
+        response.setHeader(UID_HEADER, account.getUserId());
+        response.setHeader(AUTH_HEADER, account.getToken());
+        response.setHeader(REFRESH_TOKEN_HEADER, account.getRefreshToken());
+
+        // 让前端感知到，过期时间一天，这样可以在临近过期的时候refresh token
+        Calendar expTime = Calendar.getInstance();
+        expTime.add(Calendar.DAY_OF_MONTH, 1);
+        response.setHeader("token-exp-time", expTime.getTimeInMillis() + "");
     }
 
     /**
@@ -227,7 +280,7 @@ public class PassportController extends BaseController {
                                  HttpServletResponse response) throws Exception {
 
         // 测试Hystrix超时降级
-        Thread.sleep(40000);
+//        Thread.sleep(40000);
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();
@@ -245,6 +298,15 @@ public class PassportController extends BaseController {
         if (userResult == null) {
             return IMOOCJSONResult.errorMsg("用户名或密码不正确");
         }
+
+        // 登录成功后, 需要为网关鉴权生成Token: Passport接口统统不用经过网关鉴权Filter
+        AuthResponse authResponse = authService.tokenize(userResult.getId());
+        if (!AuthCode.SUCCESS.getCode().equals(authResponse.getCode())) {
+            log.error("Token error - uid={}", userResult.getId());
+            return IMOOCJSONResult.errorMsg("Token error");
+        }
+        // 添加Token信息到Token中
+        addAuth2Header(response, authResponse.getAccount());
 
         // 改用UsersVO => 忽略隐私信息, 生成用户token, 存入redis会话
         // TODO 拆分完微服务再打开
@@ -280,6 +342,19 @@ public class PassportController extends BaseController {
     public IMOOCJSONResult logout(@RequestParam String userId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
+
+        // 登录退出后, 需要删除网关鉴权的Token信息
+        // 其实这里可以直接根据userId到Redis中获取Account信息(已在生成Token的时候设置了)
+        Account account = Account.builder()
+                    .userId(UID_HEADER)
+                    .token(request.getHeader(AUTH_HEADER))
+                    .refreshToken(request.getHeader(REFRESH_TOKEN_HEADER))
+                    .build();
+        AuthResponse auth = authService.delete(account);
+        if (!AuthCode.SUCCESS.getCode().equals(auth.getCode())) {
+            log.error("Token error - uid={}", userId);
+            return IMOOCJSONResult.errorMsg("Token error");
+        }
 
         // 清除用户的相关信息的cookie
         CookieUtils.deleteCookie(request, response, "user");

@@ -13,12 +13,13 @@ eureka:
 # Config配置中心
 #
 ############################################################
-spring:
-  cloud:
-    config:
-      name: foodie-user-service
-      discovery:
-        enabled: true
-        service-id: config-server
-      profile: dev
-      label: master
+# 由于Git仓库拉取老是超时, 所以就注释了
+#spring:
+#  cloud:
+#    config:
+#      name: foodie-user-service
+#      discovery:
+#        enabled: true
+#        service-id: config-server
+#      profile: dev
+#      label: master

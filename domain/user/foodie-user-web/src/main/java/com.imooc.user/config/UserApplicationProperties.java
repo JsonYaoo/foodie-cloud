@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 集成配置中心: 拉取配置中心中的User服务配置: 实现动态拉取业务开关控制配置
  */
-@Configuration
+// 由于Git仓库拉取老是超时, 所以就注释了
+//@Configuration
 @RefreshScope
 @Data
 public class UserApplicationProperties {
