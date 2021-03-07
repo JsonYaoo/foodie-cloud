@@ -5,6 +5,14 @@ server:
 spring:
   application:
     name: platform-gateway
+  main:
+    # 允许Bean名称相同时进行Bean覆盖 => 用于保证多个Bean注入时项目可正常启动(防止没配置@Primary注解)
+    allow-bean-definition-overriding: true
+  redis:
+    host: 192.168.1.111
+    port: 6379
+    database: 0
+    password: root
   cloud:
     gateway:
       discovery:
