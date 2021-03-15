@@ -31,4 +31,8 @@ public class Account implements Serializable {
      */
     private String refreshToken;
 
+    /**
+     * 跳过Token校验, 用于测试强制Logout测试
+     */
+    private boolean skipVerification = false;
 }

@@ -7,10 +7,10 @@ import com.imooc.auth.service.AuthService;
 import com.imooc.bo.ShopcartBO;
 import com.imooc.controller.BaseController;
 import com.imooc.pojo.IMOOCJSONResult;
-import com.imooc.user.config.UserApplicationProperties;
 import com.imooc.user.pojo.Users;
 import com.imooc.user.pojo.bo.UserBO;
 import com.imooc.user.service.UserService;
+import com.imooc.user.stream.ForceLogoutTopic;
 import com.imooc.utils.CookieUtils;
 import com.imooc.utils.JsonUtils;
 import com.imooc.utils.MD5Utils;
@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +60,9 @@ public class PassportController extends BaseController {
 
     @Autowired
     private RedisOperator redisOperator;
+
+    @Autowired
+    private ForceLogoutTopic forceLogoutTopic;
 
     // 由于Git仓库拉取老是超时, 所以就注释了
 //    @Autowired
@@ -368,4 +372,20 @@ public class PassportController extends BaseController {
         return IMOOCJSONResult.ok();
     }
 
+    /**
+     * 集成Stream测试: 测试强制登出Topic
+     * // FIXME 将这个接口从网关层移除，不对外暴露
+     */
+    @ApiOperation(value = "强制批量用户退出登录", notes = "强制批量用户退出登录", httpMethod = "POST")
+    @PostMapping("/forceLogout")
+    public IMOOCJSONResult forceLogout(@RequestParam String userIds) {
+        if(StringUtils.isNotBlank(userIds)){
+            for (String uid : userIds.split(",")) {
+                log.info("send logout message, uid={}", uid);
+                forceLogoutTopic.output().send(MessageBuilder.withPayload(uid).build());
+            }
+        }
+
+        return IMOOCJSONResult.ok();
+    }
 }

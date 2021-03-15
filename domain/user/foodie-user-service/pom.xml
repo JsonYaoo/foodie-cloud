@@ -31,5 +31,17 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>foodie-auth-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 集成Stream测试 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+        </dependency>
     </dependencies>
 </project>

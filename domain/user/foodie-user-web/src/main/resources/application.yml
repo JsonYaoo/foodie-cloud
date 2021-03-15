@@ -44,6 +44,31 @@ spring:
       max-request-size: 512000        # 文件上传请求大小限制为500kb: 500 * 1024
 #  session:
 #    store-type: redis
+############################################################
+#
+# Rabbitmq 配置
+#
+############################################################
+  rabbitmq:
+    host: 192.168.1.111
+    port: 5672
+    username: guest
+    password: guest
+############################################################
+#
+# Stream 配置
+#
+############################################################
+  cloud:
+    stream:
+      bindings:
+        force-logout-consumer:
+          destination: force-logout-topic
+          group: force-logout-group
+          consumer:
+            max-attempts: 2
+        force-logout-producer:
+          destination: force-logout-topic
 
 ############################################################
 #
