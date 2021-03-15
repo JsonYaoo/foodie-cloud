@@ -44,6 +44,35 @@ spring:
       max-request-size: 512000        # 文件上传请求大小限制为500kb: 500 * 1024
 #  session:
 #    store-type: redis
+############################################################
+#
+# Rabbitmq 配置
+#
+############################################################
+  rabbitmq:
+    host: 192.168.1.111
+    port: 5672
+    username: guest
+    password: guest
+############################################################
+#
+# Stream 配置
+#
+############################################################
+  cloud:
+    stream:
+      bindings:
+        orderstatus-consumer:
+          destination: orderstatus-topic
+          group: orderstatus-group
+        orderstatus-producer:
+          destination: orderstatus-topic
+      rabbit:
+        bindings:
+          # 指定producer开启延迟消息: 生产者允许生成延迟交换机与延迟队列(都只有一个)
+          orderstatus-producer:
+            producer:
+              delayed-exchange: true
 
 ############################################################
 #
