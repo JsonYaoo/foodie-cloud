@@ -1,0 +1,21 @@
+server:
+  port: 20005
+
+spring:
+  application:
+    name: zipkin-server
+  main:
+    allow-bean-definition-overriding: true
+
+# Eureka注册中心地址
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20000/eureka/
+
+# 避免启动控制台日志报错
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
