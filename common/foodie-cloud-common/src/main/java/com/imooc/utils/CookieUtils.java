@@ -207,6 +207,14 @@ public final class CookieUtils {
                 cookie.setMaxAge(cookieMaxage);
             if (null != request) {// 设置域名的cookie
             	String domainName = getDomainName(request);
+
+            	// TODO 发布生产前
+                // 发布生产前需要改成前端所在主机的IP: 这是前后端必须同一台主机, 当前后端分离时, 必须设置为有DNS功能的相同域名或者子域名
+                // 结论:
+                // => 1、前端与后端不同主机，不用域名的话，永远传不了cookie
+                // => 2、cookie必须同域名或子域名，而且不论端口号
+                // => 3、这里说的前端主机指的是前端代码所在的主机(后端出口), 后端主机指的是服务网关的所在的主机(后端入口)
+//                String domainName = "node-150";
                 logger.info("========== domainName: {} ==========", domainName);
                 if (!"localhost".equals(domainName)) {
                 	cookie.setDomain(domainName);

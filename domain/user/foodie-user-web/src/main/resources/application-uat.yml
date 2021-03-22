@@ -1,10 +1,10 @@
 ############################################################
 #
-# web访问端口号  约定：8088
+# web访问端口号  约定：11002
 #
 ############################################################
 server:
-#  port: 8088 # 挂件补充端口号
+  port: 11002 # 挂件补充端口号
   tomcat:
     uri-encoding: UTF-8
   max-http-header-size: 80KB
@@ -20,15 +20,12 @@ spring:
   # 允许Feign接口代理对象重载: 当Bean对象名字一样的时候, 允许覆盖注册
   main:
     allow-bean-definition-overriding: true
-  profiles:
-    # 除了配置文件, 还可以通过profiles指定配置文件实现
-    active: dev
   datasource:                                           # 数据源的相关配置
     type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
     driver-class-name: com.mysql.jdbc.Driver          # mysql驱动
-#    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    url: jdbc:mysql://192.168.1.150:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
     username: root
-#    password: root
+    password: root
     hikari:
       connection-timeout: 30000       # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
       minimum-idle: 5                 # 最小连接数
@@ -42,6 +39,11 @@ spring:
     multipart:
       max-file-size: 512000           # 文件上传大小限制为500kb: 500 * 1024
       max-request-size: 512000        # 文件上传请求大小限制为500kb: 500 * 1024
+  redis:
+    # Redis单机单实例
+    database: 0
+    host: 192.168.1.150
+    port: 6379
 #  session:
 #    store-type: redis
 ############################################################
@@ -50,7 +52,7 @@ spring:
 #
 ############################################################
   rabbitmq:
-    host: 192.168.1.111
+    host: 192.168.1.150
     port: 5672
     username: guest
     password: guest
@@ -78,8 +80,8 @@ spring:
 mybatis:
   type-aliases-package: com.imooc.user.pojo          # 所有POJO类所在包路径
   mapper-locations: classpath:mapper/*.xml      # mapper映射文件
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl    # SQL日志打印
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl    # SQL日志打印
 
 ############################################################
 #

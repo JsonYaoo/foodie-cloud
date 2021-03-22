@@ -9,6 +9,7 @@ import com.imooc.controller.BaseController;
 import com.imooc.pojo.IMOOCJSONResult;
 import com.imooc.user.pojo.Users;
 import com.imooc.user.pojo.bo.UserBO;
+import com.imooc.user.pojo.vo.UsersVO;
 import com.imooc.user.service.UserService;
 import com.imooc.user.stream.ForceLogoutTopic;
 import com.imooc.utils.CookieUtils;
@@ -21,6 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 @Api(value = "注册登录", tags = {"用于注册登录的相关接口"})
 @RestController
@@ -313,16 +316,29 @@ public class PassportController extends BaseController {
         addAuth2Header(response, authResponse.getAccount());
 
         // 改用UsersVO => 忽略隐私信息, 生成用户token, 存入redis会话
-        // TODO 拆分完微服务再打开
-//        UsersVO usersVO = conventUsersVO(userResult);
+        UsersVO usersVO = conventUsersVO(userResult);
 
         // 设置Cookie
-//        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
         // 同步购物车数据
-        synchShopcartData(userResult.getId(), request, response);
+//        synchShopcartData(userResult.getId(), request, response);
 
         return IMOOCJSONResult.ok(userResult);
+    }
+
+    // TODO UsersVO先拿出来
+    public UsersVO conventUsersVO(Users userResult) {
+        // 生成用户token, 存入redis会话
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        redisOperator.set(REDIS_USER_TOKEN + ":" + userResult.getId(), uniqueToken);
+
+        // 复制Users属性
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(userResult, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
+
+        return usersVO;
     }
 
     /**

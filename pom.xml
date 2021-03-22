@@ -124,7 +124,8 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.41</version>
+            <!-- 解决mysql驱动冲突, 这里使用springboot管理的mysql驱动 -->
+            <!--<version>5.1.41</version>-->
         </dependency>
     </dependencies>
 

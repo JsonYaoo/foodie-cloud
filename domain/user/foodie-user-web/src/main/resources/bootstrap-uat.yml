@@ -1,0 +1,29 @@
+############################################################
+#
+# Eureka注册中心
+#
+############################################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.1.150:20000/eureka/
+  instance:
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+    ip-address: 192.168.1.100
+    prefer-ip-address: true
+
+############################################################
+#
+# Config配置中心
+#
+############################################################
+# 由于Git仓库拉取老是超时, 所以就注释了
+#spring:
+#  cloud:
+#    config:
+#      name: foodie-user-service
+#      discovery:
+#        enabled: true
+#        service-id: config-server
+#      profile: dev
+#      label: master

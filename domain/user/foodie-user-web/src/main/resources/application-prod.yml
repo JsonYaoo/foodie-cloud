@@ -1,8 +1,175 @@
+############################################################
+#
+# web访问端口号  约定：11002
+#
+############################################################
 server:
-  port: 11002
+  port: 11002 # 挂件补充端口号
+  tomcat:
+    uri-encoding: UTF-8
+  max-http-header-size: 80KB
 
+############################################################
+#
+# 配置数据源信息
+#
+############################################################
 spring:
-  datasource:
-    # 集群时一定要写内网IP
-    url: jdbc:mysql://192.168.1.113:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+  application:
+    name: foodie-user-service
+  # 允许Feign接口代理对象重载: 当Bean对象名字一样的时候, 允许覆盖注册
+  main:
+    allow-bean-definition-overriding: true
+  datasource:                                           # 数据源的相关配置
+    type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
+    driver-class-name: com.mysql.jdbc.Driver          # mysql驱动
+    url: jdbc:mysql://192.168.1.150:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    username: root
     password: root
+    hikari:
+      connection-timeout: 30000       # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
+      minimum-idle: 5                 # 最小连接数
+      maximum-pool-size: 20           # 最大连接数
+      auto-commit: true               # 自动提交
+      idle-timeout: 600000            # 连接超时的最大时长（毫秒），超时则被释放（retired），默认:10分钟
+      pool-name: DateSourceHikariCP     # 连接池名字
+      max-lifetime: 1800000           # 连接的生命时长（毫秒），超时而且没被使用则被释放（retired），默认:30分钟 1800000ms
+      connection-test-query: SELECT 1
+  servlet:
+    multipart:
+      max-file-size: 512000           # 文件上传大小限制为500kb: 500 * 1024
+      max-request-size: 512000        # 文件上传请求大小限制为500kb: 500 * 1024
+  redis:
+    # Redis单机单实例
+    database: 0
+    host: 192.168.1.150
+    port: 6379
+#  session:
+#    store-type: redis
+############################################################
+#
+# Rabbitmq 配置
+#
+############################################################
+  rabbitmq:
+    host: 192.168.1.150
+    port: 5672
+    username: guest
+    password: guest
+############################################################
+#
+# Stream 配置
+#
+############################################################
+  cloud:
+    stream:
+      bindings:
+        force-logout-consumer:
+          destination: force-logout-topic
+          group: force-logout-group
+          consumer:
+            max-attempts: 2
+        force-logout-producer:
+          destination: force-logout-topic
+
+############################################################
+#
+# mybatis 配置
+#
+############################################################
+mybatis:
+  type-aliases-package: com.imooc.user.pojo          # 所有POJO类所在包路径
+  mapper-locations: classpath:mapper/*.xml      # mapper映射文件
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl    # SQL日志打印
+
+############################################################
+#
+# mybatis mapper 配置
+#
+############################################################
+# 通用 Mapper 配置
+mapper:
+  # myMapper接口
+  mappers: com.imooc.my.mapper.MyMapper
+  # 是否自动补全username != ''
+  not-empty: false
+  # 数据库方言MySQL
+  identity: MYSQL
+# 分页插件配置
+pagehelper:
+  # 数据库方言MySQL
+  helperDialect: mysql
+  # 是否支持分页参数传递
+  supportMethodsArguments: true
+
+# 集成配置中心: 拉取配置中心中的User服务配置
+# 开启所有Actuator的Endpoints
+#management:
+#  # 已禁用, 可不配
+##  security:
+##    enabled: true
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: always
+
+# 配置HystrixCommand属性
+hystrix:
+  command:
+    # HystrixCommand全局属性配置
+    default:
+      # 打开降级功能
+      fallback:
+        enabled: true
+      # 打开断路器功能
+      circuitBreaker:
+        enabled: true
+        # 5个request之后才进行统计
+        requestVolumeThreshold: 5
+        # 超过50%错误，那么开启熔断
+        errorThresholdPercentage: 50
+        # 10秒之后进入半开状态
+        sleepWindowInMilliseconds: 10000
+        # forceClosed, forceOpen 强制关闭/开启熔断开关(慎用)
+      # 打开超时判断功能
+      execution:
+        timeout:
+          enabled: true
+        # 指定线程池隔离方式, 还可以设置为信号量方式
+        isolation:
+          thread:
+            # 指定线程超时时间为10s
+            timeoutInMilliseconds: 10000
+            # 自定线程超时时打断该线程
+            interruptOnTimeout: true
+            # 自定线程取消时打断该线程
+            interruptOnFutureCancel: true
+      # 配置统计属性
+      metrics:
+        # 统计数量
+        rollingStats:
+          # 时间窗口设置
+          timeInMilliseconds: 20000
+          # 设置时间窗口内桶的数量(一般最好被时间整除)
+          # numBuckets: 10
+          # 设置每个桶的大小(容纳请求的数量)
+          # bucketSize: 300
+        # 统计百分比
+#        rollingPercentile:
+          # 时间窗口设置
+#          timeInMilliseconds: 20000
+          # 设置时间窗口内桶的数量(一般最好被时间整除)
+          # numBuckets: 10
+          # 设置每个桶的大小(容纳请求的数量)
+          # bucketSize: 300
+    # HystrixCommand 指定服务属性配置
+    loginFail:
+      execution:
+        isolation:
+          thread:
+            # 指定线程超时时间为3s
+            timeoutInMilliseconds: 3000
