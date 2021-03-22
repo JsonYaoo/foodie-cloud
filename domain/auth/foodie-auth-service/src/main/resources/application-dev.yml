@@ -6,9 +6,22 @@ spring:
     name: foodie-auth-service
   redis:
     database: 0
-    host: 192.168.1.111
+    host: 127.0.0.1
+#    host: 192.168.1.111
     port: 6379
-    password: root
+#    password: root
+  # 链路追踪
+  zipkin:
+    # 使用服务名来配置路径
+    discovery-client-enabled: true
+    base-url: http://ZIPKIN-SERVER/
+    locator:
+      discovery:
+        enabled: true
+  # 设置sleuth采样率
+  sleuth:
+    sampler:
+      probability: 1
 
 eureka:
   client:

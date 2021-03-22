@@ -26,7 +26,8 @@ spring:
   datasource:                                           # 数据源的相关配置
     type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
     driver-class-name: com.mysql.jdbc.Driver          # mysql驱动
-    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+    # 低版本MySQL、高版本Mysql驱动 => 需要配置serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=UTC
     username: root
     password: root
     hikari:
@@ -45,11 +46,27 @@ spring:
   redis:
     # Redis单机单实例
     database: 0
-    host: 192.168.1.111
+    host: 127.0.0.1
+#    host: 192.168.1.111
     port: 6379
-    password: root
+#    password: root
 #  session:
 #    store-type: redis
+  # 链路追踪
+  zipkin:
+    # 使用服务名来配置路径
+    discovery-client-enabled: true
+    base-url: http://ZIPKIN-SERVER/
+    locator:
+      discovery:
+        enabled: true
+    # 以http的方式上传数据 => 由于bus依赖项导入了rabbitmq的依赖项，zipkin会默认使用mq
+    sender:
+      type: web
+  # 设置sleuth采样率
+  sleuth:
+    sampler:
+      probability: 1
 ############################################################
 #
 # Rabbitmq 配置
